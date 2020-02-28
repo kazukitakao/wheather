@@ -2,6 +2,7 @@ package geocoding
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -58,12 +59,14 @@ type geocodeResult struct {
 // jsonから位置情報を取得
 
 // API keyは後に環境変数に組み込む
-const apiKey string = ""
+const apiKey string = "AIzaSyDzrywihv-2Ii7xDM8UQD5OPlLEm_Xzs8c"
 
 // GetGeocoding google APIを使用して指定した住所の座標情報を取得する
 func GetGeocoding(address string) (longitude, latitude float64) {
 	// APIを呼び出して結果を取得
-	response, err := http.Get("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey)
+	url := "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey
+	fmt.Println(url)
+	response, err := http.Get(url)
 	if err != nil {
 		log.Fatalf("Google Geocode API failed : %s", err)
 	}
@@ -75,8 +78,11 @@ func GetGeocoding(address string) (longitude, latitude float64) {
 		log.Fatalf("JSON decorde failed : %s", err)
 	}
 
-	if data.Results[0].Geometry.Location.Lat == 0.0 && data.Results[0].Geometry.Location.Lng == 0.0 {
-		log.Fatalf("Location is nothing")
-	}
+	// デバッグ用
+	// fmt.Printf("住所名：%v", data.Results[0].FormattedAddress)
+
+	// if data.Results[0].Geometry.Location.Lat == 0.0 && data.Results[0].Geometry.Location.Lng == 0.0 {
+	// 	log.Fatalf("Location is nothing")
+	// }
 	return data.Results[0].Geometry.Location.Lng, data.Results[0].Geometry.Location.Lat
 }
