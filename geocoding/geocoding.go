@@ -53,16 +53,16 @@ type geocodeResult struct {
 	Status string `json:"status"`
 }
 
-// apikeyはURLに埋め込んでよし？
 // リクエスト機能の作成 keyはそのまま？md5とか必要？
 // 送信して受け取ったレスポンスをjsonに変換する
 // jsonから位置情報を取得
+// APIコールの上限値をサーバ側で記録する必要あり
 
 // API keyは後に環境変数に組み込む
 const apiKey string = "AIzaSyDzrywihv-2Ii7xDM8UQD5OPlLEm_Xzs8c"
 
 // GetGeocoding google APIを使用して指定した住所の座標情報を取得する
-func GetGeocoding(address string) (longitude, latitude float64) {
+func GetGeocoding(address string) (longitude, latitude float64, location string) {
 	// APIを呼び出して結果を取得
 	url := "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey
 	fmt.Println(url)
@@ -78,11 +78,5 @@ func GetGeocoding(address string) (longitude, latitude float64) {
 		log.Fatalf("JSON decorde failed : %s", err)
 	}
 
-	// デバッグ用
-	// fmt.Printf("住所名：%v", data.Results[0].FormattedAddress)
-
-	// if data.Results[0].Geometry.Location.Lat == 0.0 && data.Results[0].Geometry.Location.Lng == 0.0 {
-	// 	log.Fatalf("Location is nothing")
-	// }
-	return data.Results[0].Geometry.Location.Lng, data.Results[0].Geometry.Location.Lat
+	return data.Results[0].Geometry.Location.Lng, data.Results[0].Geometry.Location.Lat, data.Results[0].FormattedAddress
 }
