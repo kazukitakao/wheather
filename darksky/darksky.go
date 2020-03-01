@@ -127,13 +127,12 @@ type darkSkyResult struct {
 
 const key string = "5a7d1f43ddeb56aabfec6ada3384968b"
 
-// GetForecast darksky apiを使用して天気情報を取得する
-func GetForecast(latitude, longitude float64) {
+// GetForecastToday darksky apiを使用して検索した時点のその日の天気情報を取得する
+func GetForecastToday(latitude, longitude float64) {
 	// 実行された日の1時間単位の天気予報を取得する
-	// Hourlyから検索された日時の24時間分のデータを取得できる
+	// Hourlyから検索された日時の24時間分のデータを取得する
 	now := time.Now().Unix()
 	url := fmt.Sprintf("https://api.darksky.net/forecast/%s/%v,%v,%v?exclude=minutely,daily,alerts,flags&lang=ja", key, latitude, longitude, now)
-	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatalf("DarkSky API failed : %s", err)
@@ -151,7 +150,8 @@ func GetForecast(latitude, longitude float64) {
 	}
 
 	//時間指定するには現在の日付0:00を取得してtimeオプションを付与する必要がある
-	fmt.Printf("今日の天気：%v\n", data.Hourly.Summary)
+	fmt.Println()
+	fmt.Printf("%v年%v月%v日の天気：%v\n", data.Hourly.Summary)
 	for index, v := range data.Hourly.Data {
 		// 3時間毎の天気データを出力
 		if index%3 == 0 {
